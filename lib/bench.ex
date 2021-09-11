@@ -1,9 +1,8 @@
 defmodule Bench do
-  @microseconds 1_000_000
+  @ms_in_second 1_000_000
 
-  def series(), do: [1, 2, 3, 4, 10, 14, 20, 30, 35, 60, 365, 3650, 36500, 365_000, 3_650_000]
-
-  def run_time(), do: 10 * @microseconds
+  def series(), do: [1, 10, 14, 20, 30, 35, 365, 36500, 365_000]
+  def run_time(), do: 1.5 * @ms_in_second
 
   def mark(function, series \\ series(), timeout \\ run_time(), acc \\ [])
   def mark(_, [], _, acc), do: acc
@@ -13,8 +12,6 @@ defmodule Bench do
       fn -> process(function, n) end
       |> Task.async()
       |> Task.await(:infinity)
-
-    # :erlang.garbage_collect()
 
     if time < timeout do
       mark(function, rest_n, timeout, [{n, result, time, mem} | acc])
