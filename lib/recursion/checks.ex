@@ -1,4 +1,6 @@
 defmodule Recursion.Checks do
+  def run(n), do: live(n)
+
   def live(n, late \\ 0, absent \\ 0)
   def live(0, _, _), do: 1
 

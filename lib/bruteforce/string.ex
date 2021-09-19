@@ -1,7 +1,7 @@
-defmodule Bruteforce do
+defmodule Bruteforce.String do
   @options ["O", "L", "A"]
 
-  def run(n), do: n |> generate |> filter_out |> Enum.count()
+  def run(n), do: n |> generate |> filter_out_string |> Enum.count()
 
   def generate(n, list \\ [""])
   def generate(0, list), do: list
@@ -15,11 +15,11 @@ defmodule Bruteforce do
     generate(n - 1, new_list)
   end
 
-  def filter_out(list) do
+  def filter_out_string(list) do
     Enum.reject(list, fn item ->
       cond do
-        String.match?(item, ~r/AAA/) -> true
-        String.match?(item, ~r/L[OA]*L/) -> true
+        String.contains?(item, "AAA") -> true
+        String.length(item) - String.length(String.replace(item, "L", "")) > 1 -> true
         true -> false
       end
     end)

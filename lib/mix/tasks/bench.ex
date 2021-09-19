@@ -7,96 +7,30 @@ defmodule Mix.Tasks.Bench do
 
   @shortdoc "Benchmark "
   @impl Mix.Task
-  def run(["bruteforce"]), do: bruteforce()
-  def run(["bruteforce.string"]), do: bruteforce_string()
-  def run(["bruteforce.early"]), do: bruteforce_early()
-  def run(["recursion"]), do: recursion()
-  def run(["recursion.checks"]), do: recursion_checks()
-  def run(["recursion.chains"]), do: recursion_chains()
-  def run(["recursion.cache"]), do: recursion_cache()
-  def run(["buckets"]), do: buckets()
-  def run(["buckets.factor"]), do: buckets_factor()
-  def run(["buckets.multi"]), do: buckets_multi()
 
-  def buckets_multi do
-    fn n ->
-      Buckets.Multi.run(n)
-    end
-    |> process
+  @algo %{
+    "bruteforce" => &Bruteforce.run/1,
+    "bruteforce.string" => &Bruteforce.String.run/1,
+    "bruteforce.early" => &Bruteforce.EarlyFilter.run/1,
+    "recursion" => &Recursion.run/1,
+    "recursion.checks" => &Recursion.Checks.run/1,
+    "recursion.chains" => &Recursion.Chains.run/1,
+    "recursion.cache" => &Recursion.Cache.run/1,
+    "buckets" => &Buckets.run/1,
+    "buckets.factor" => &Buckets.Factor.run/1
+  }
+
+  def run([key]) do
+    process(Map.fetch!(@algo, key))
   end
 
-
-  def buckets_factor do
-    fn n ->
-      Buckets.Factor.run(n)
-    end
-    |> process
-  end
-
-
-  def buckets do
-    fn n ->
-      Buckets.run(n)
-    end
-    |> process
-  end
-
-  def recursion_cache do
-    fn n ->
-      Recursion.Cache.live_on_time(n)
-    end
-    |> process
-  end
-
-  def recursion_chains do
-    fn n ->
-      Recursion.Chain.live_on_time(n)
-    end
-    |>process
-  end
-
-  def recursion_checks do
-    fn n ->
-      Recursion.Checks.live(n)
-    end
-    |> process
-  end
-
-  def recursion() do
-    fn n ->
-      Recursion.live(n)
-    end
-    |> process
-  end
-
-  def bruteforce_early() do
-    fn n ->
-      n
-      |> Bruteforce.EarlyFilter.generate()
-      |> Enum.count()
-    end
-    |> process
-  end
-
-
-  def bruteforce do
-    fn n ->
-      n
-      |> Bruteforce.generate()
-      |> Bruteforce.filter_out()
-      |> Enum.count()
-    end
-    |> process
-  end
-
-  def bruteforce_string do
-    fn n ->
-      n
-      |> Bruteforce.generate()
-      |> Bruteforce.filter_out_string()
-      |> Enum.count()
-    end
-    |> process
+  def process(fun) do
+    fun
+    |> Stat.run()
+    |> Enum.map(fn {n, _, t, m} ->
+      {n, trunc(t / 1) / 1_000_000, trunc(m * 1000 / 1024 / 1024) / 1000}
+    end)
+    |> pretty_print_one()
   end
 
   def pretty_print_one(res) do
@@ -105,14 +39,5 @@ defmodule Mix.Tasks.Bench do
     |> Enum.each(fn {n, time, mem} ->
       IO.puts("\t#{n}:\t\t#{time} s\t#{mem} Mb")
     end)
-  end
-
-  def process(fun) do
-    fun
-    |> Stat.run()
-    |> Enum.map(fn {n, _, t, m} ->
-      {n, trunc(t / 1) / 1000000, trunc(m * 1000 / 1024 / 1024) / 1000}
-    end)
-    |> pretty_print_one()
   end
 end

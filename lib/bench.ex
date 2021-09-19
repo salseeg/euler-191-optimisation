@@ -1,15 +1,17 @@
 defmodule Bench do
   @ms_in_second 1_000_000
+  @run_timeout 2 * @ms_in_second
+  @series [1, 10, 14, 20, 30, 35, 36500, 365_000]
 
-  def series(), do: [1, 10, 14, 20, 30, 35, 365, 36500, 365_000]
-  def run_time(), do: 1.5 * @ms_in_second
-
-  def mark(function, series \\ series(), timeout \\ run_time(), acc \\ [])
+  @doc """
+    Runs a function, tracking time to execute and memory used
+  """
+  def mark(function, series \\ @series, timeout \\ @run_timeout, acc \\ [])
   def mark(_, [], _, acc), do: acc
 
   def mark(function, [n | rest_n], timeout, acc) do
     {time, result, mem} =
-      fn -> process(function, n) end
+      fn -> track(function, n) end
       |> Task.async()
       |> Task.await(:infinity)
 
@@ -20,25 +22,25 @@ defmodule Bench do
     end
   end
 
-  def process(function, n) do
+  defp track(function, n) do
     {time, result} = :timer.tc(function, [n])
     mem = get_memory()
 
     {time, result, mem}
   end
 
-  def get_memory() do
+  defp get_memory() do
     get_memory(:process_mem) + get_memory(:vm_binaries)
   end
 
-  def get_memory(:process_mem) do
+  defp get_memory(:process_mem) do
     word_size = :erlang.system_info(:wordsize)
     {:memory, words} = :erlang.process_info(self(), :memory)
 
     words * word_size
   end
 
-  def get_memory(:vm_binaries) do
+  defp get_memory(:vm_binaries) do
     {:binary, data} = Process.info(self(), :binary)
 
     data

@@ -1,4 +1,6 @@
 defmodule Recursion do
+  def run(n), do: live(n)
+
   def live(n, late \\ 0, absent \\ 0)
   def live(_, 2, _), do: 0
   def live(_, _, 3), do: 0

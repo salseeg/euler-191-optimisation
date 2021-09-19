@@ -14,12 +14,15 @@ defmodule Opt191Test do
   end
 
   test "benchmark test" do
-    sample = fn n -> :timer.sleep(100 * n); n+1 end
+    sample = fn n ->
+      :timer.sleep(100 * n)
+      n + 1
+    end
 
     assert [
              {150, 151, c},
              {15, 16, b},
-             {1, 2, a},
+             {1, 2, a}
            ] = Bench.mark(sample, [1, 15, 150])
 
     assert a > 100_000
@@ -34,35 +37,36 @@ defmodule Opt191Test do
 
   def known_results() do
     {[1, 2, 4, 5, 7, 10],
-      [
-        {10, 3536},
-        {7, 418},
-        {5, 94},
-        {4, 43},
-        {2, 8},
-        {1, 3}
-      ]
-    }
+     [
+       {10, 3536},
+       {7, 418},
+       {5, 94},
+       {4, 43},
+       {2, 8},
+       {1, 3}
+     ]}
   end
 
   test "bruteforce" do
-
     {sequence, correct} = known_results()
-    result = Bench.mark(fn n -> Bruteforce.generate(n) |> Bruteforce.filter_out() |> Enum.count end, sequence)
+
+    result =
+      Bench.mark(
+        fn n -> Bruteforce.generate(n) |> Bruteforce.filter_out() |> Enum.count() end,
+        sequence
+      )
 
     Enum.zip(correct, result)
     |> Enum.each(fn {{correct_n, correct_res}, {actual_n, actual_res, _}} ->
       assert correct_n == actual_n
       assert correct_res == actual_res
     end)
-
   end
 
   @tag timeout: :infinity
   @tag :focus
   test "stats" do
-    Stat.run(fn n -> Bruteforce.generate(n) |> Bruteforce.filter_out() |> Enum.count end)
+    Stat.run(fn n -> Bruteforce.generate(n) |> Bruteforce.filter_out() |> Enum.count() end)
     |> IO.inspect()
   end
-
 end
