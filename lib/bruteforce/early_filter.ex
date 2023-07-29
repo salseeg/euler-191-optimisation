@@ -20,8 +20,8 @@ defmodule Bruteforce.EarlyFilter do
   def filter_out(list) do
     Enum.reject(list, fn item ->
       cond do
-        String.contains?(item, "AAA") -> true
-        String.length(item) > 1 + String.length(item |> String.replace("L", "")) -> true
+        String.match?(item, ~r/AAA/) -> true
+        String.match?(item, ~r/L[OA]*L/) -> true
         true -> false
       end
     end)

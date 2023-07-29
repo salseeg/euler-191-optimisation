@@ -2,15 +2,15 @@ defmodule Buckets.Factor do
   def count(0, factors), do: factors
 
   def count(n, {o, a, aa, l, la, laa}),
-      do:
-        count(n - 1, {
-          o + a + aa,
-          o,
-          a,
-          o + a + aa + l + la + laa,
-          l,
-          la
-        })
+    do:
+      count(n - 1, {
+        o + a + aa,
+        o,
+        a,
+        o + a + aa + l + la + laa,
+        l,
+        la
+      })
 
   def run(n), do: run(n, trunc(n / 32 + 2))
 

@@ -1,7 +1,9 @@
 defmodule Bench do
+  @moduledoc "Benchmarking helpers"
+
   @ms_in_second 1_000_000
   @run_timeout 2 * @ms_in_second
-  @series [1, 10, 14, 20, 30, 35, 36500, 365_000]
+  @series [1, 10, 14, 20, 30, 35, 100, 365, 3650, 36500, 365_000]
 
   @doc """
     Runs a function, tracking time to execute and memory used

@@ -1,4 +1,4 @@
-defmodule Recursion.Chain do
+defmodule Recursion.Chains do
   def run(n), do: live_on_time(n)
 
   def live_on_time(0), do: 1

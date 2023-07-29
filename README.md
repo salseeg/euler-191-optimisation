@@ -23,23 +23,26 @@ How many "prize" strings exist over a 30-day period?
 
 
 
+## Calculation
 
-
-
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `opt191` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:opt191, "~> 0.1.0"}
-  ]
-end
+To see all available algorithms run 
+```bash
+mix calc 
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/opt191](https://hexdocs.pm/opt191).
+To calculate amount of "prize" string select an algorithm and run like
+```bash
+mix calc recursion 13
+```
+
+## Benchmarking
+
+The goal is to count longer prize string. The benchmark helps to compare different algorithms.
+
+To get stats for an algorithm, run like
+```bash
+mix bench recursion
+```
+
+
 
